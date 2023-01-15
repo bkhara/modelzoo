@@ -21,7 +21,7 @@ from tensorflow.keras.mixed_precision.experimental import Policy
 
 from modelzoo.common.tf.estimator.cs_estimator_spec import CSEstimatorSpec
 
-NUM_CLASSES = 10
+NDOF = 1
 
 
 def build_model(features, labels, mode, params):
@@ -49,21 +49,17 @@ def build_model(features, labels, mode, params):
         with tf.name_scope("km_disable_scope"):
             dense_layer = Dense(hidden_size, dtype=dtype)
         act_layer = Activation(model_params['activation_fn'], dtype=dtype)
-        if isinstance(model_params['activation_fn'], LeakyReLU):
-            # workaround due to TF bug
-            # so that the leaky_relu operation can be float16
-            act_layer = tf.nn.leaky_relu
         with tf.name_scope("km_disable_scope"):
             x = dense_layer(x)
         x = act_layer(x)
-        x = dropout_layer(x, training=(mode == tf.estimator.ModeKeys.TRAIN))
     with tf.name_scope("km_disable_scope"):
         # Model has len(hidden_sizes) + 1 Dense layers
-        output_dense_layer = Dense(NUM_CLASSES, dtype=dtype)
+        output_dense_layer = Dense(NDOF, dtype=dtype)
         logits = output_dense_layer(x)
-    losses_per_sample = tf.nn.sparse_softmax_cross_entropy_with_logits(
-        labels=labels, logits=logits,
-    )
+    # losses_per_sample = tf.nn.sparse_softmax_cross_entropy_with_logits(
+    #     labels=labels, logits=logits,
+    # )
+    losses_per_sample = tf.math.square(labels - logits)
     loss = tf.reduce_mean(input_tensor=losses_per_sample)
     tf.compat.v1.summary.scalar('loss', loss)
     return loss, logits

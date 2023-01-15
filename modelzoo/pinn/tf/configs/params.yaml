@@ -13,11 +13,11 @@
 # limitations under the License.
 
 # Params for FC MNIST model
-description: "FC-MNIST base model params"
+description: "PINN model params"
 
 train_input:
     shuffle: True
-    data_dir: './tfds' # Place to store data
+    data_dir: './pinndata' # Place to store data
     batch_size: 256
     num_parallel_calls: 0   # 0 means AUTOTUNE
 
@@ -25,8 +25,12 @@ model:
     # Total number of Dense layers
     # is len(hidden_sizes) + 1
     hidden_sizes:
-        - 500
-        - 300
+        - 100
+        - 100
+        - 100
+        - 100
+        - 100
+        - 100
     dropout: 0.2
     # activation fns supported:
     # relu, tanh, elu, selu, linear (identity)

@@ -35,9 +35,9 @@ from modelzoo.common.tf.run_utils import (
     save_params,
     update_params_from_args,
 )
-from modelzoo.fc_mnist.tf.data import eval_input_fn, train_input_fn
-from modelzoo.fc_mnist.tf.model import model_fn
-from modelzoo.fc_mnist.tf.utils import (
+from modelzoo.pinn.tf.data import eval_input_fn, train_input_fn
+from modelzoo.pinn.tf.model import model_fn
+from modelzoo.pinn.tf.utils import (
     DEFAULT_YAML_PATH,
     get_custom_stack_params,
     get_params,

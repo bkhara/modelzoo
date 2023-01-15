@@ -15,15 +15,33 @@
 """
 MNIST input function
 """
+import numpy as np
 import tensorflow as tf
 import tensorflow_datasets as tfds
 
+def load_numpy_data(data_dir):
+    import os
+    data_dict = np.load(os.path.join(data_dir,'data.npz'))
+    X_train, u_train = data_dict["X_train"], data_dict["u_train"]
+    X_test, u_test = data_dict["X_test"], data_dict["u_test"]
+    dataset_train = tf.data.Dataset.from_tensor_slices({'image':X_train, 'label':u_train})
+    dataset_test = tf.data.Dataset.from_tensor_slices({'image':X_test, 'label':u_test})
+    dataset = {'train':dataset_train, 'test':dataset_test}
+    datasizes = {'train':u_train.shape[0], 'test':u_test.shape[0]}
+    return dataset, datasizes
+
+# def _parse_batch_samples(samples):
+#     images = tf.image.convert_image_dtype(samples["image"], tf.float16,)
+#     batch_size = images.shape[0]
+#     images = tf.reshape(images, [batch_size, -1])
+#     labels = tf.cast(samples["label"], tf.int32)
+#     return images, labels
 
 def _parse_batch_samples(samples):
-    images = tf.image.convert_image_dtype(samples["image"], tf.float16,)
+    images = tf.cast(samples["image"], tf.float16)
     batch_size = images.shape[0]
-    images = tf.reshape(images, [batch_size, -1])
-    labels = tf.cast(samples["label"], tf.int32)
+    # images = tf.reshape(images, [batch_size, -1])
+    labels = tf.cast(samples["label"], tf.float16)
     return images, labels
 
 
@@ -53,11 +71,12 @@ def input_fn(params, mode=tf.estimator.ModeKeys.TRAIN):
     if batch_size is None:
         batch_size = input_params["batch_size"]
 
-    data, info = tfds.load("mnist", data_dir=data_dir, with_info=True)
+    # data, info = tfds.load("mnist", data_dir=data_dir, with_info=True)
+    data, sizes = load_numpy_data(data_dir)
     ds = data["train"] if training else data["test"]
 
     if training and input_params["shuffle"]:
-        ds = ds.shuffle(info.splits["train"].num_examples)
+        ds = ds.shuffle(sizes["train"])
     if training:
         ds = ds.repeat()
 
