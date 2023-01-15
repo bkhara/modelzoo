@@ -31,10 +31,12 @@ model:
         - 100
         - 100
         - 100
+        - 100
+        - 100
     dropout: 0.2
     # activation fns supported:
     # relu, tanh, elu, selu, linear (identity)
-    activation_fn: 'relu'
+    activation_fn: 'tanh'
 
 optimizer:
     learning_rate: 0.001
