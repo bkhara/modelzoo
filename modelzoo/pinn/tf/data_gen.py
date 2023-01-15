@@ -1,15 +1,19 @@
 import os
 import numpy as np
 
-uex = lambda x: np.sin(x[:,0])*np.sin(x[:,1])
-
+nsd = 3
 train_size = 2**20
 test_size = 2**10
 
-X_train = np.random.rand(train_size,2)
+if nsd == 2:
+	uex = lambda x: np.sin(x[:,0])*np.sin(x[:,1])
+elif nsd == 3:
+	uex = lambda x: np.sin(x[:,0])*np.sin(x[:,1])**np.sin(x[:,2])
+
+X_train = np.random.rand(train_size,nsd)
 u_train = uex(X_train)
 
-X_test = np.random.rand(test_size,2)
+X_test = np.random.rand(test_size,nsd)
 u_test = uex(X_test)
 
 data_dir = './pinndata'
